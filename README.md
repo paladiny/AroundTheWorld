@@ -9,3 +9,13 @@
 ## GCP创建服务器
 机器类型选微型，最便宜的那种。地区优先香港，其他所有配置不动，防火墙规则勾选http和https流量。
 创建完使用google提供的网页ssh工具登录。修改root密码:sudo passwd root,修改完成后用命令 su  获取root权限。
+
+修改ssh配置文件以便客户端登录
+vim /etc/ssh/sshd_config
+PermitRootLogin 是否允许以root账号登录
+PasswordAuthentication 是否允许密码登录
+
+## v2ray安装
+V2Ray 提供了一个在 Linux 中的自动化安装脚本。这个脚本会自动检测有没有安装过 V2Ray，如果没有，则进行完整的安装和配置；如果之前安装过 V2Ray，则只更新 V2Ray 二进制程序而不更新配置。
+bash <(curl -L -s https://install.direct/go.sh)
+安装完后修改配置文件 /etc/v2ray/config.json
