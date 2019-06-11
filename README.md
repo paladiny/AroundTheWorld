@@ -19,3 +19,6 @@ PasswordAuthentication 是否允许密码登录<br>
 V2Ray 提供了一个在 Linux 中的自动化安装脚本。这个脚本会自动检测有没有安装过 V2Ray，如果没有，则进行完整的安装和配置；如果之前安装过 V2Ray，则只更新 V2Ray 二进制程序而不更新配置。<br>
 ```bash <(curl -L -s https://install.direct/go.sh)``` <br>
 安装完后修改配置文件 ```vim /etc/v2ray/config.json``` <br>
+
+
+https://www.jianshu.com/p/9f71e260925d
