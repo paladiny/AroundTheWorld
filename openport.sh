@@ -62,7 +62,8 @@ else
 	echo -e "$a\n$b\n$c\n$d\nexit 0\n" >>/etc/rc.local
 	echoResult '创建完成'
 
-chmod 755 /etc/rc.local
+	chmod 755 /etc/rc.local
+fi
 
 echoInfo '检查软链接是否存在'
 if [ -f "/etc/systemd/system/rc.local.service" ];then
