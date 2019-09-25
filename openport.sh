@@ -58,7 +58,7 @@ if [ -f "/etc/rc.local" ]; then
 else
 	echoError '文件不存在'
 	echoInfo "创建文件 /etc/rc.local\n"
-	echo -e "$a\n$b\n$c\n$d\nexit 0\n" >>/etc/rc.local
+	echo -e "$a\n$b\n$c\n$d\n" >>/etc/rc.local
 
 	chmod 755 /etc/rc.local
 fi
