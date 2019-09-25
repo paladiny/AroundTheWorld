@@ -1,65 +1,77 @@
 #!/bin/bash
-iptables -P INPUT ACCEPT
-iptables -P OUTPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -F
-echo '已临时放开所有端口'
-echo '添加启动项，每次服务器重启后会自动放开所有端口'
+a='iptables -P INPUT ACCEPT'
+b='iptables -P OUTPUT ACCEPT'
+c='iptables -P FORWARD ACCEPT'
+d='iptables -F'
 
-echo '检查 /lib/systemd/system/rc.local.service 是否有[Install]段'
+function openPort(){
+	$a
+	$b
+	$c
+	$d
+}
+
+function echoInfo(){
+	echo -e "\e[1;36m$1\e[0m"
+}
+
+function echoResult(){
+	echo -e "\e[1;32m$1\e[0m"
+}
+
+function echoError(){
+	echo -e "\e[1;35m$1\e[0m"
+}
+
+
+
+openPort
+echoResult '已临时放开所有端口' 
+echoInfo '添加启动项，每次服务器重启后会自动放开所有端口'
+
+echoInfo '检查 /lib/systemd/system/rc.local.service 是否有[Install]段'
 grep '[Install]' /lib/systemd/system/rc.local.service > /dev/null
 if [ $? -eq 0 ]; then
-	echo '检查结果：[Install]段已存在'
+	echoResult '检查结果：[Install]段已存在'
 else
-	echo '检查结果：[Install]段不存在'
-	echo '添加[Install]段'
+	echoError '检查结果：[Install]段不存在'
+	echoInfo '添加[Install]段'
 	echo ''>> /lib/systemd/system/rc.local.service
 	echo '[Install]'>> /lib/systemd/system/rc.local.service
 	echo 'WantedBy=multi-user.target'>> /lib/systemd/system/rc.local.service
 	echo 'Alias=rc-local.service' >> /lib/systemd/system/rc.local.service
-	echo '添加完成'
+	echoResult '添加完成'
 fi
 
-echo '检查 /etc/rc.local 是否存在'
+echoInfo '检查 /etc/rc.local 是否存在'
 if [ -f "/etc/rc.local" ]; then
-	echo '检查结果：/etc/rc.local 文件存在'
-	echo '检查重启是否自动放开所有端口'
+	echoResult '检查结果：/etc/rc.local 文件存在'
+	echoInfo '检查重启是否自动放开所有端口'
 	grep 'iptables -P' /etc/rc.local > /dev/null
 	if [ $? -eq 0 ]; then
-		echo '检查结果：自动放开所有端口'
+		echoResult '检查结果：自动放开所有端口'
 	else
-		echo '检查结果：无法自动放开所有端口，正在添加iptables -P'
-		echo 'iptables -P INPUT ACCEPT
-iptables -P OUTPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -F' >>/etc/rc.local
-		echo '添加完成'
+		echoError '检查结果：无法自动放开所有端口'
+		echoInfo '正在添加脚本到rc.local'
+		echo -e "$a\n$b\n$c\n$d\n" >>/etc/rc.local
+		echoResult '添加完成'
 	fi
 
 else
-	echo '创建文件 /etc/rc.local'
-	echo '#!/bin/sh -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
-# echo "this is a test" > /usr/local/text.log
-# exit 0
-iptables -P INPUT ACCEPT
-iptables -P OUTPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -F' >>/etc/rc.local
-
+	echoInfo '创建文件 /etc/rc.local'
+	echo -e "$a\n$b\n$c\n$d\nexit 0\n" >>/etc/rc.local
+	echoResult '创建完成'
 
 chmod 755 /etc/rc.local
 
-ln -s /lib/systemd/system/rc.local.service /etc/systemd/system/
+echoInfo '检查软链接是否存在'
+if [ -f "/etc/systemd/system/rc.local.service" ];then
+	echoResult '软链接存在'
+	else
+		echoError '软链接不存在'
+		echoInfo '创建软链接'
+		ln -s /lib/systemd/system/rc.local.service /etc/systemd/system/
+		echoResult '创建完成'
 fi
 
+echoInfo '脚本执行完毕'
